@@ -27,16 +27,17 @@ function init() {
     lucide.createIcons();
 }
 
-// --- SIDEBAR COLLAPSE ---
+// --- SIDEBAR TOGGLE (RESPONSIVE) ---
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    const expandBtn = document.getElementById('expand-btn');
-    sidebar.classList.toggle('sidebar-hidden');
+    const overlay = document.getElementById('mobile-overlay');
+    const isMobile = window.innerWidth <= 1024;
 
-    if (sidebar.classList.contains('sidebar-hidden')) {
-        expandBtn.classList.remove('hidden');
+    if (isMobile) {
+        sidebar.classList.toggle('sidebar-visible');
+        overlay.classList.toggle('active');
     } else {
-        expandBtn.classList.add('hidden');
+        sidebar.classList.toggle('sidebar-hidden');
     }
 }
 
@@ -50,6 +51,14 @@ function switchTab(tabId) {
         b.classList.remove('bg-green-50', 'text-[#166534]', 'border-r-4', 'border-green-600');
         if (b.dataset.tab === tabId) b.classList.add('bg-green-50', 'text-[#166534]', 'border-r-4', 'border-green-600');
     });
+
+    // Auto-close sidebar on mobile after selecting a tab
+    if (window.innerWidth <= 1024) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        sidebar.classList.remove('sidebar-visible');
+        overlay.classList.remove('active');
+    }
 }
 
 // --- COURT RENDERING & COLOR LOGIC ---
@@ -65,28 +74,28 @@ function renderCourts(filter = "") {
 
         let bgStyle = "bg-white border-slate-100";
         let badgeClass = "bg-green-500 text-white";
-        let btnColor = "bg-[#166534]"; // Default Green
-        let btnText = "Open Court";
+        let btnColor = "bg-[#166534]"; 
+        let btnText = "Close Court";
 
         if (court.status === 'occupied') {
             bgStyle = "bg-red-50/40 border-red-100";
             badgeClass = "bg-red-600 text-white";
-            btnColor = "bg-red-500"; // Red Button when Occupied
-            btnText = "Close Court";
+            btnColor = "bg-red-500"; 
+            btnText = "Open Court";
         } else if (court.status === 'maintenance') {
             bgStyle = "bg-orange-50/50 border-orange-100";
             badgeClass = "bg-orange-500 text-white";
-            btnColor = "bg-orange-400 cursor-not-allowed"; // Orange Button
+            btnColor = "bg-orange-400 cursor-not-allowed"; 
             btnText = "Maintenance";
         }
 
-        card.className = `${bgStyle} border rounded-[2.5rem] p-6 shadow-sm transition-all flex flex-col relative overflow-hidden`;
+        card.className = `${bgStyle} border rounded-[2rem] md:rounded-[2.5rem] p-5 md:p-6 shadow-sm transition-all flex flex-col relative overflow-hidden`;
 
         card.innerHTML = `
             <div class="flex justify-between items-start mb-4">
-                <h4 class="font-bold text-slate-800">${court.name}</h4>
+                <h4 class="font-bold text-slate-800 text-sm md:text-base">${court.name}</h4>
                 <div class="flex items-center gap-2">
-                    <span class="text-[9px] font-bold px-2 py-1 rounded-full uppercase ${badgeClass}">${court.status}</span>
+                    <span class="text-[8px] md:text-[9px] font-bold px-2 py-1 rounded-full uppercase ${badgeClass}">${court.status}</span>
                     <div class="relative">
                         <button onclick="toggleCourtDropdown(event)" class="p-1 hover:bg-black/5 rounded-lg text-slate-400">
                             <i data-lucide="more-vertical" class="w-4 h-4"></i>
@@ -99,40 +108,38 @@ function renderCourts(filter = "") {
                     </div>
                 </div>
             </div>
-            <div class="flex-1 flex flex-col items-center justify-center py-6">
+            <div class="flex-1 flex flex-col items-center justify-center py-4 md:py-6">
                 ${court.status === 'occupied' ? `
-                    <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white mb-2 shadow-lg"><i data-lucide="user" class="w-5 h-5"></i></div>
-                    <p class="font-bold text-slate-800">${court.player || 'Court Closed'}</p>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${court.time}</p>
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 rounded-full flex items-center justify-center text-white mb-2 shadow-lg"><i data-lucide="user" class="w-5 h-5"></i></div>
+                    <p class="font-bold text-slate-800 text-sm">${court.player || 'Court Closed'}</p>
+                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">${court.time}</p>
                 ` : `
-                    <i data-lucide="${court.status === 'maintenance' ? 'wrench' : 'user-plus'}" class="w-10 h-10 text-slate-200 mb-2"></i>
-                    <p class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">${court.status === 'maintenance' ? 'Repairing' : 'Ready'}</p>
+                    <i data-lucide="${court.status === 'maintenance' ? 'wrench' : 'user-plus'}" class="w-8 h-8 md:w-10 md:h-10 text-slate-200 mb-2"></i>
+                    <p class="text-[9px] md:text-[10px] font-bold text-slate-300 uppercase tracking-widest">${court.status === 'maintenance' ? 'Repairing' : 'Ready'}</p>
                 `}
             </div>
-            <button onclick="handleCourtAction(${court.id})" ${court.status === 'maintenance' ? 'disabled' : ''} class="w-full mt-2 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-white transition-all active:scale-95 ${btnColor}">
+            <button onclick="handleCourtAction(${court.id})" ${court.status === 'maintenance' ? 'disabled' : ''} class="w-full mt-2 py-3 md:py-4 rounded-2xl text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white transition-all active:scale-95 ${btnColor}">
                 ${btnText}
             </button>
         `;
         grid.appendChild(card);
     });
 
-    // Expansion Slot
     const expandBtn = document.createElement('button');
     expandBtn.onclick = () => confirmAction('Add expansion court?', addCourt);
-    expandBtn.className = "border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center group hover:bg-green-50 transition-all min-h-[250px]";
+    expandBtn.className = "border-2 border-dashed border-slate-200 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center group hover:bg-green-50 transition-all min-h-[200px] md:min-h-[250px]";
     expandBtn.innerHTML = `
-        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-slate-300 group-hover:text-green-600 border border-slate-200 mb-3 shadow-sm"><i data-lucide="plus"></i></div>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expansion Slot</p>
+        <div class="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center text-slate-300 group-hover:text-green-600 border border-slate-200 mb-3 shadow-sm"><i data-lucide="plus"></i></div>
+        <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expansion Slot</p>
     `;
     grid.appendChild(expandBtn);
     lucide.createIcons();
 }
 
-// --- COURT ACTIONS ---
+// --- REMAINING ACTIONS (UNCHANGED LOGIC) ---
 function handleCourtAction(id) {
     const court = courtState.find(c => c.id === id);
     if (!court) return;
-
     if (court.status === 'occupied') {
         confirmAction(`End session for ${court.name}?`, () => {
             court.status = 'available';
@@ -140,9 +147,9 @@ function handleCourtAction(id) {
             renderCourts();
         });
     } else {
-        confirmAction(`Open ${court.name}?`, () => {
+        confirmAction(`Close ${court.name}?`, () => {
             court.status = 'occupied';
-            court.player = null; // Don't assign a player automatically
+            court.player = null;
             court.time = "";
             renderCourts();
         });
@@ -169,7 +176,6 @@ function updateStatus(id, status) {
     }
 }
 
-// --- MODALS & UTILS ---
 function confirmAction(message, onConfirm) {
     const modal = document.getElementById('confirm-modal');
     document.getElementById('modal-desc').innerText = message;
