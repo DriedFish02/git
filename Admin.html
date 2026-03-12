@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,82 +10,41 @@
     <style>
         :root {
             --color-background: #f1f5f9;
-            /* Slightly deeper background to make white cards pop */
             --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* REVERTED Spinner Loader */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Professional Spinner Loader */
         #loader {
-            position: fixed;
-            inset: 0;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
+            position: fixed; inset: 0; background: white;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease;
         }
-
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             border: 4px solid #e2e8f0;
             border-top: 4px solid #166534;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+        /* Sidebar & Navigation */
+        #sidebar { transition: width 0.3s ease, transform 0.3s ease; }
+        .sidebar-hidden { width: 0 !important; transform: translateX(-100%); overflow: hidden; }
+        .action-dropdown { display: none; position: absolute; right: 0; top: 100%; z-index: 50; }
+        .action-dropdown.active { display: block; }
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Sidebar & Depth Styles */
-        #sidebar {
-            transition: width 0.3s ease, transform 0.3s ease;
-        }
-
-        .sidebar-hidden {
-            width: 0 !important;
-            transform: translateX(-100%);
-            overflow: hidden;
-        }
-
-        .action-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            z-index: 50;
-        }
-
-        .action-dropdown.active {
-            display: block;
-        }
-
-        /* Border Depth */
-        .depth-border {
-            border: 1.5px solid #e2e8f0;
-        }
+        /* Depth & Borders */
+        .depth-border { border: 1.5px solid #cbd5e1; } /* Darker border for visibility */
+        .card-depth { border: 1.5px solid #e2e8f0; box-shadow: var(--box-shadow); }
     </style>
 </head>
 
 <body class="flex h-screen overflow-hidden text-slate-700 bg-[var(--color-background)]">
 
-    <!-- REVERTED LOADING SCREEN -->
+    <!-- LOADER -->
     <div id="loader">
         <div class="text-center">
             <div class="spinner mx-auto mb-4"></div>
@@ -95,8 +53,7 @@
     </div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar"
-        class="fixed inset-y-0 left-0 lg:relative w-64 bg-white border-r border-slate-300 flex flex-col z-50 shadow-xl">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 lg:relative w-64 bg-white border-r-2 border-slate-300 flex flex-col z-50 shadow-2xl">
         <div class="p-6 flex items-center justify-between border-b border-slate-100">
             <div class="flex items-center gap-3">
                 <img src="components/logo.jpg" alt="Logo" class="w-10 h-10 object-contain rounded-lg shadow-sm">
@@ -108,36 +65,30 @@
         </div>
 
         <nav class="flex-1 px-4 space-y-1 mt-6">
-            <button onclick="switchTab('admin-panel')" data-tab="admin-panel"
-                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+            <button onclick="switchTab('admin-panel')" data-tab="admin-panel" class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>Admin Panel</span>
             </button>
-            <button onclick="switchTab('event-manager')" data-tab="event-manager"
-                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+            <button onclick="switchTab('event-manager')" data-tab="event-manager" class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
                 <i data-lucide="trophy" class="w-5 h-5"></i>
                 <span>Event Manager</span>
             </button>
-            <button onclick="switchTab('reports')" data-tab="reports"
-                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+            <button onclick="switchTab('reports')" data-tab="reports" class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
                 <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                 <span>Reports</span>
             </button>
-            <button onclick="switchTab('coaches')" data-tab="coaches"
-                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+            <button onclick="switchTab('coaches')" data-tab="coaches" class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
                 <i data-lucide="users" class="w-5 h-5"></i>
                 <span>Coaches</span>
             </button>
-            <button onclick="switchTab('settings')" data-tab="settings"
-                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+            <button onclick="switchTab('settings')" data-tab="settings" class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
                 <i data-lucide="settings" class="w-5 h-5"></i>
                 <span>Settings</span>
             </button>
         </nav>
 
         <div class="p-4 border-t border-slate-100">
-            <button onclick="confirmAction('Log out?', () => window.location.reload())"
-                class="flex items-center gap-3 p-3 w-full text-red-500 hover:bg-red-50 rounded-xl transition-all font-medium">
+            <button onclick="confirmAction('Log out?', () => window.location.reload())" class="flex items-center gap-3 p-3 w-full text-red-500 hover:bg-red-50 rounded-xl transition-all font-medium">
                 <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span>Logout</span>
             </button>
@@ -145,11 +96,10 @@
     </aside>
 
     <main class="flex-1 flex flex-col overflow-hidden w-full relative">
-        <header
-            class="h-16 bg-white border-b border-slate-300 px-8 flex justify-between items-center shrink-0 z-20 shadow-sm">
+        <!-- HEADER -->
+        <header class="h-16 bg-white border-b-2 border-slate-300 px-8 flex justify-between items-center shrink-0 z-20">
             <div class="flex items-center gap-4">
-                <button id="expand-btn" onclick="toggleSidebar()"
-                    class="p-2 text-slate-500 hover:bg-slate-50 rounded-lg hidden">
+                <button id="expand-btn" onclick="toggleSidebar()" class="p-2 text-slate-500 hover:bg-slate-50 rounded-lg hidden">
                     <i data-lucide="menu"></i>
                 </button>
                 <h2 class="text-xl font-bold text-slate-800 tracking-tight">Management Portal</h2>
@@ -159,49 +109,37 @@
                     <p class="text-xs font-bold text-slate-800">Admin Session</p>
                     <p class="text-[9px] font-bold text-green-600 uppercase">System Online</p>
                 </div>
-                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center depth-border shadow-sm">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center border-2 border-slate-200 shadow-sm">
                     <i data-lucide="shield-check" class="w-5 h-5 text-[#166534]"></i>
                 </div>
             </div>
         </header>
 
-        <!-- Main Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto">
-            <div class="p-4 md:p-8">
+        <!-- MAIN SCROLLABLE AREA -->
+        <!-- We use 'flex flex-col' here so that children can expand -->
+        <div class="flex-1 overflow-y-auto flex flex-col">
+            
+            <!-- CONTENT WRAPPER: 'flex-1' ensures this pushes the footer down -->
+            <div class="flex-1 p-4 md:p-8">
+                
+                <!-- TAB: ADMIN PANEL -->
                 <section id="admin-panel" class="tab-content active">
                     <div class="mb-8">
                         <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Admin Dashboard</h1>
                     </div>
 
-                    <!-- Stats Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                        <div
-                            class="bg-white p-6 rounded-3xl shadow-[var(--box-shadow)] flex justify-between items-center depth-border">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Occupancy</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1">12.5%</h3>
-                            </div>
-                            <div class="p-3 bg-red-50 rounded-2xl text-red-600 border border-red-100"><i
-                                    data-lucide="activity" class="w-6 h-6"></i></div>
+                        <div class="bg-white p-6 rounded-3xl card-depth flex justify-between items-center">
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Occupancy</p><h3 class="text-2xl font-bold text-slate-800 mt-1">12.5%</h3></div>
+                            <div class="p-3 bg-red-50 rounded-2xl text-red-600 border border-red-100"><i data-lucide="activity" class="w-6 h-6"></i></div>
                         </div>
-                        <div
-                            class="bg-white p-6 rounded-3xl shadow-[var(--box-shadow)] flex justify-between items-center depth-border">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bookings Today
-                                </p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1">24</h3>
-                            </div>
-                            <div class="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-100"><i
-                                    data-lucide="calendar-check" class="w-6 h-6"></i></div>
+                        <div class="bg-white p-6 rounded-3xl card-depth flex justify-between items-center">
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bookings Today</p><h3 class="text-2xl font-bold text-slate-800 mt-1">24</h3></div>
+                            <div class="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-100"><i data-lucide="calendar-check" class="w-6 h-6"></i></div>
                         </div>
-                        <div
-                            class="bg-white p-6 rounded-3xl shadow-[var(--box-shadow)] flex justify-between items-center depth-border">
-                            <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Revenue</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-1">₱2,450</h3>
-                            </div>
-                            <div class="p-3 bg-green-50 rounded-2xl text-green-600 border border-green-100"><i
-                                    data-lucide="banknote" class="w-6 h-6"></i></div>
+                        <div class="bg-white p-6 rounded-3xl card-depth flex justify-between items-center">
+                            <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Revenue</p><h3 class="text-2xl font-bold text-slate-800 mt-1">₱2,450</h3></div>
+                            <div class="p-3 bg-green-50 rounded-2xl text-green-600 border border-green-100"><i data-lucide="banknote" class="w-6 h-6"></i></div>
                         </div>
                     </div>
 
@@ -209,78 +147,71 @@
                         <div class="flex-1">
                             <div class="flex justify-between items-center mb-6">
                                 <h3 class="font-bold text-slate-800 flex items-center gap-2">Live Courts</h3>
-                                <input type="text" id="courtSearch" placeholder="Filter courts..."
-                                    class="w-48 px-4 py-2 bg-white depth-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-green-600/20">
+                                <input type="text" id="courtSearch" placeholder="Filter courts..." class="w-48 px-4 py-2 bg-white border-2 border-slate-200 rounded-xl text-sm outline-none focus:border-green-600">
                             </div>
-                            <!-- Court Grid will be rendered here via index.js -->
                             <div id="court-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                         </div>
 
                         <!-- Operations Widget -->
                         <div class="w-full xl:w-80">
-                            <div
-                                class="bg-white rounded-[2rem] shadow-[var(--box-shadow)] depth-border overflow-hidden">
-                                <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
+                            <div class="bg-white rounded-[2rem] card-depth overflow-hidden border-2 border-slate-200">
+                                <div class="px-6 py-5 border-b-2 border-slate-100 flex items-center gap-3 bg-slate-50/50">
                                     <i data-lucide="sliders" class="w-5 h-5 text-green-600"></i>
                                     <h3 class="font-bold text-slate-800">Operations</h3>
                                 </div>
                                 <div class="p-6">
-                                    <label
-                                        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 block">Set
-                                        Hours</label>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 block">Set Hours</label>
                                     <div class="space-y-4">
                                         <div class="flex items-center gap-3">
                                             <div class="flex-1">
                                                 <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Open</p>
-                                                <input type="time" id="weekday-open" value="06:00"
-                                                    class="w-full p-3 bg-slate-50 depth-border rounded-xl text-xs font-bold outline-none">
+                                                <input type="time" id="weekday-open" value="06:00" class="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-bold outline-none">
                                             </div>
                                             <div class="flex-1">
                                                 <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Close</p>
-                                                <input type="time" id="weekday-close" value="23:00"
-                                                    class="w-full p-3 bg-slate-50 depth-border rounded-xl text-xs font-bold outline-none">
+                                                <input type="time" id="weekday-close" value="23:00" class="w-full p-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-bold outline-none">
                                             </div>
                                         </div>
-                                        <button onclick="handleApplySchedule()"
-                                            class="w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest text-white bg-[#166534] shadow-lg shadow-green-900/20 hover:bg-[#115e2b] transition-all">Apply
-                                            Schedule</button>
+                                        <button onclick="handleApplySchedule()" class="w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest text-white bg-[#166534] shadow-lg shadow-green-900/20 hover:bg-[#115e2b] transition-all">Apply Schedule</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
+
+                <!-- OTHER TABS: Footer will remain below these even if they have little text -->
+                <section id="event-manager" class="tab-content"><h1 class="text-2xl font-bold">Event Manager Content</h1></section>
+                <section id="reports" class="tab-content"><h1 class="text-2xl font-bold">Reports Analytics</h1></section>
+                <section id="coaches" class="tab-content"><h1 class="text-2xl font-bold">Coaches Roster</h1></section>
+                <section id="settings" class="tab-content"><h1 class="text-2xl font-bold">System Settings</h1></section>
+
             </div>
 
-            <!-- FOOTER: Moved inside the flow but at the very bottom -->
-            <footer
-                class="w-full bg-white border-t border-slate-300 py-6 px-8 text-center pointer-events-none select-none">
+            <!-- FOOTER: Anchored to bottom of scrollable area, untouchable -->
+            <footer class="mt-auto w-full bg-white border-t-2 border-slate-300 py-6 px-8 text-center pointer-events-none select-none">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     © 2026 Premiere Southpoint Badminton Court All rights reserved.
                 </p>
             </footer>
+
         </div>
     </main>
 
-    <!-- Modal remains the same -->
-    <div id="confirm-modal"
-        class="hidden fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-xs p-8 text-center shadow-2xl depth-border">
-            <div
-                class="w-16 h-16 bg-slate-50 text-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-200">
+    <!-- MODAL -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xs p-8 text-center shadow-2xl border-2 border-slate-200">
+            <div class="w-16 h-16 bg-slate-50 text-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-slate-100">
                 <i data-lucide="help-circle" class="w-8 h-8"></i>
             </div>
             <p id="modal-desc" class="text-slate-500 mb-8 text-sm font-medium leading-relaxed"></p>
             <div class="flex gap-3">
-                <button onclick="closeModals()"
-                    class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">No</button>
-                <button id="modal-confirm-btn"
-                    class="flex-1 py-4 bg-[#166534] text-white rounded-2xl font-bold">Yes</button>
+                <button onclick="closeModals()" class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">No</button>
+                <button id="modal-confirm-btn" class="flex-1 py-4 bg-[#166534] text-white rounded-2xl font-bold">Yes</button>
             </div>
         </div>
     </div>
 
     <script src="index.js"></script>
 </body>
-
 </html>
