@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <link rel="stylesheet" href="Admin.css">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <img src="components/logo.jpg" alt="logo">
+                    <h2>South<span class="primary">point</span></h2>
+                </div>
+                <div class="close" id="close-btn">
+                    <span class="material-icons-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="#" class="active">
+                    <span class="material-icons-sharp">grid_view</span>
+                    <h3>Dashboard</h3>
+                </a>
+                <a href="#">
+                    <span class="material-icons-sharp">celebration</span>
+                    <h3>Event Manager</h3>
+                </a>
+                <a href="#">
+                    <span class="material-icons-sharp">assignment_turned_in</span>
+                    <h3>Reports</h3>
+                </a>
+                <a href="#">
+                    <span class="material-icons-sharp">account_circle</span>
+                    <h3>Players</h3>
+                </a>
+                <a href="#">
+                    <span class="material-icons-sharp">sports</span>
+                    <h3>Coaches</h3>
+                </a>
+                <a href="#">
+                    <span class="material-icons-sharp">settings</span>
+                    <h3>Settings</h3>
+                </a>
+                <a href="#" class="logout">
+                    <span class="material-icons-sharp">logout</span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+
+        <main>
+            <h1>Dashboard</h1>
+            <div class="date">
+                <input type="date">
+            </div>
+
+            <div class="insights">
+                <!-- Court Count -->
+                <div class="court-count">
+                    <span class="material-icons-sharp">stadium</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Court Count</h3>
+                            <h1>3/8</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p>37%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">Last 24 Hours</small>
+                </div>
+
+                <!-- Active Queue -->
+                <div class="active-queue">
+                    <span class="material-icons-sharp">timer</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Active Queue</h3>
+                            <h1>9</h1>
+                        </div>
+                    </div>
+                    <small class="text-muted">Last 24 Hours</small>
+                </div>
+
+                <!-- Daily Revenue -->
+                <div class="daily-revenue">
+                    <span class="material-icons-sharp">bar_chart</span>
+                    <div class="middle">
+                        <div class="left">
+                            <h3>Daily Revenue</h3>
+                            <h1>4,000</h1>
+                        </div>
+                        <div class="progress">
+                            <svg>
+                                <circle cx="38" cy="38" r="36"></circle>
+                            </svg>
+                            <div class="number">
+                                <p>40%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted"> +12% Last 24 Hours</small>
+                </div>
+
+            </div> <!-- End of insights -->
+            <section class="court-section">
+                <h1 class="court-title">Court Management</h1>
+
+                <div class="court-grid" id="courtGrid">
+                    <!-- JS will populate cards here, starting with 8 -->
+                </div>
+            </section>
+
+        <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">Confirm Action</h3>
+            <p id="modalMessage"></p>
+            <div class="modal-buttons">
+                <button id="modalCancel" class="btn-cancel">Cancel</button>
+                <button id="modalConfirm" class="btn-confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+
+        </main>
+    </div>
+
+</body>
+
+<script src="index.js"></script>
+
+</html>
