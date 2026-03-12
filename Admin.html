@@ -4,142 +4,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
-    <link rel="stylesheet" href="Admin.css">
-    <title>Dashboard</title>
+    <title>CourtMaster | Management Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --color-background: #f1f5f9;
+            /* Slightly deeper background to make white cards pop */
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* REVERTED Spinner Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #166534;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Sidebar & Depth Styles */
+        #sidebar {
+            transition: width 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar-hidden {
+            width: 0 !important;
+            transform: translateX(-100%);
+            overflow: hidden;
+        }
+
+        .action-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            z-index: 50;
+        }
+
+        .action-dropdown.active {
+            display: block;
+        }
+
+        /* Border Depth */
+        .depth-border {
+            border: 1.5px solid #e2e8f0;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="container">
+<body class="flex h-screen overflow-hidden text-slate-700 bg-[var(--color-background)]">
 
-        <aside>
-            <div class="top">
-                <div class="logo">
-                    <img src="components/logo.jpg" alt="logo">
-                    <h2>South<span class="primary">point</span></h2>
+    <!-- REVERTED LOADING SCREEN -->
+    <div id="loader">
+        <div class="text-center">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Southpoint is preparing...</p>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 lg:relative w-64 bg-white border-r border-slate-300 flex flex-col z-50 shadow-xl">
+        <div class="p-6 flex items-center justify-between border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <img src="components/logo.jpg" alt="Logo" class="w-10 h-10 object-contain rounded-lg shadow-sm">
+                <span class="font-bold text-xl tracking-tight text-slate-800">ADMIN</span>
+            </div>
+            <button onclick="toggleSidebar()" class="p-1 hover:bg-slate-100 rounded-lg text-slate-400 lg:flex hidden">
+                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-1 mt-6">
+            <button onclick="switchTab('admin-panel')" data-tab="admin-panel"
+                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span>Admin Panel</span>
+            </button>
+            <button onclick="switchTab('event-manager')" data-tab="event-manager"
+                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+                <i data-lucide="trophy" class="w-5 h-5"></i>
+                <span>Event Manager</span>
+            </button>
+            <button onclick="switchTab('reports')" data-tab="reports"
+                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                <span>Reports</span>
+            </button>
+            <button onclick="switchTab('coaches')" data-tab="coaches"
+                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span>Coaches</span>
+            </button>
+            <button onclick="switchTab('settings')" data-tab="settings"
+                class="nav-btn flex items-center gap-3 p-3 w-full rounded-xl transition-all hover:bg-slate-50 text-slate-500 font-medium">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="confirmAction('Log out?', () => window.location.reload())"
+                class="flex items-center gap-3 p-3 w-full text-red-500 hover:bg-red-50 rounded-xl transition-all font-medium">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden w-full relative">
+        <header
+            class="h-16 bg-white border-b border-slate-300 px-8 flex justify-between items-center shrink-0 z-20 shadow-sm">
+            <div class="flex items-center gap-4">
+                <button id="expand-btn" onclick="toggleSidebar()"
+                    class="p-2 text-slate-500 hover:bg-slate-50 rounded-lg hidden">
+                    <i data-lucide="menu"></i>
+                </button>
+                <h2 class="text-xl font-bold text-slate-800 tracking-tight">Management Portal</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-bold text-slate-800">Admin Session</p>
+                    <p class="text-[9px] font-bold text-green-600 uppercase">System Online</p>
                 </div>
-                <div class="close" id="close-btn">
-                    <span class="material-icons-sharp">close</span>
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center depth-border shadow-sm">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-[#166534]"></i>
                 </div>
             </div>
+        </header>
 
-            <div class="sidebar">
-                <a href="#" class="active">
-                    <span class="material-icons-sharp">grid_view</span>
-                    <h3>Dashboard</h3>
-                </a>
-                <a href="#">
-                    <span class="material-icons-sharp">celebration</span>
-                    <h3>Event Manager</h3>
-                </a>
-                <a href="#">
-                    <span class="material-icons-sharp">assignment_turned_in</span>
-                    <h3>Reports</h3>
-                </a>
-                <a href="#">
-                    <span class="material-icons-sharp">account_circle</span>
-                    <h3>Players</h3>
-                </a>
-                <a href="#">
-                    <span class="material-icons-sharp">sports</span>
-                    <h3>Coaches</h3>
-                </a>
-                <a href="#">
-                    <span class="material-icons-sharp">settings</span>
-                    <h3>Settings</h3>
-                </a>
-                <a href="#" class="logout">
-                    <span class="material-icons-sharp">logout</span>
-                    <h3>Logout</h3>
-                </a>
-            </div>
-        </aside>
+        <!-- Main Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto">
+            <div class="p-4 md:p-8">
+                <section id="admin-panel" class="tab-content active">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Admin Dashboard</h1>
+                    </div>
 
-        <main>
-            <h1>Dashboard</h1>
-            <div class="date">
-                <input type="date">
-            </div>
-
-            <div class="insights">
-                <!-- Court Count -->
-                <div class="court-count">
-                    <span class="material-icons-sharp">stadium</span>
-                    <div class="middle">
-                        <div class="left">
-                            <h3>Court Count</h3>
-                            <h1>3/8</h1>
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-[var(--box-shadow)] flex justify-between items-center depth-border">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Occupancy</p>
+                                <h3 class="text-2xl font-bold text-slate-800 mt-1">12.5%</h3>
+                            </div>
+                            <div class="p-3 bg-red-50 rounded-2xl text-red-600 border border-red-100"><i
+                                    data-lucide="activity" class="w-6 h-6"></i></div>
                         </div>
-                        <div class="progress">
-                            <svg>
-                                <circle cx="38" cy="38" r="36"></circle>
-                            </svg>
-                            <div class="number">
-                                <p>37%</p>
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-[var(--box-shadow)] flex justify-between items-center depth-border">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bookings Today
+                                </p>
+                                <h3 class="text-2xl font-bold text-slate-800 mt-1">24</h3>
+                            </div>
+                            <div class="p-3 bg-blue-50 rounded-2xl text-blue-600 border border-blue-100"><i
+                                    data-lucide="calendar-check" class="w-6 h-6"></i></div>
+                        </div>
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-[var(--box-shadow)] flex justify-between items-center depth-border">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Revenue</p>
+                                <h3 class="text-2xl font-bold text-slate-800 mt-1">₱2,450</h3>
+                            </div>
+                            <div class="p-3 bg-green-50 rounded-2xl text-green-600 border border-green-100"><i
+                                    data-lucide="banknote" class="w-6 h-6"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col xl:flex-row gap-8">
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2">Live Courts</h3>
+                                <input type="text" id="courtSearch" placeholder="Filter courts..."
+                                    class="w-48 px-4 py-2 bg-white depth-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-green-600/20">
+                            </div>
+                            <!-- Court Grid will be rendered here via index.js -->
+                            <div id="court-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                        </div>
+
+                        <!-- Operations Widget -->
+                        <div class="w-full xl:w-80">
+                            <div
+                                class="bg-white rounded-[2rem] shadow-[var(--box-shadow)] depth-border overflow-hidden">
+                                <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
+                                    <i data-lucide="sliders" class="w-5 h-5 text-green-600"></i>
+                                    <h3 class="font-bold text-slate-800">Operations</h3>
+                                </div>
+                                <div class="p-6">
+                                    <label
+                                        class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 block">Set
+                                        Hours</label>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex-1">
+                                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Open</p>
+                                                <input type="time" id="weekday-open" value="06:00"
+                                                    class="w-full p-3 bg-slate-50 depth-border rounded-xl text-xs font-bold outline-none">
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Close</p>
+                                                <input type="time" id="weekday-close" value="23:00"
+                                                    class="w-full p-3 bg-slate-50 depth-border rounded-xl text-xs font-bold outline-none">
+                                            </div>
+                                        </div>
+                                        <button onclick="handleApplySchedule()"
+                                            class="w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest text-white bg-[#166534] shadow-lg shadow-green-900/20 hover:bg-[#115e2b] transition-all">Apply
+                                            Schedule</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <small class="text-muted">Last 24 Hours</small>
-                </div>
+                </section>
+            </div>
 
-                <!-- Active Queue -->
-                <div class="active-queue">
-                    <span class="material-icons-sharp">timer</span>
-                    <div class="middle">
-                        <div class="left">
-                            <h3>Active Queue</h3>
-                            <h1>9</h1>
-                        </div>
-                    </div>
-                    <small class="text-muted">Last 24 Hours</small>
-                </div>
+            <!-- FOOTER: Moved inside the flow but at the very bottom -->
+            <footer
+                class="w-full bg-white border-t border-slate-300 py-6 px-8 text-center pointer-events-none select-none">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    © 2026 Premiere Southpoint Badminton Court All rights reserved.
+                </p>
+            </footer>
+        </div>
+    </main>
 
-                <!-- Daily Revenue -->
-                <div class="daily-revenue">
-                    <span class="material-icons-sharp">bar_chart</span>
-                    <div class="middle">
-                        <div class="left">
-                            <h3>Daily Revenue</h3>
-                            <h1>4,000</h1>
-                        </div>
-                        <div class="progress">
-                            <svg>
-                                <circle cx="38" cy="38" r="36"></circle>
-                            </svg>
-                            <div class="number">
-                                <p>40%</p>
-                            </div>
-                        </div>
-                    </div>
-                    <small class="text-muted"> +12% Last 24 Hours</small>
-                </div>
-
-            </div> <!-- End of insights -->
-            <section class="court-section">
-                <h1 class="court-title">Court Management</h1>
-
-                <div class="court-grid" id="courtGrid">
-                    <!-- JS will populate cards here, starting with 8 -->
-                </div>
-            </section>
-
-        <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <h3 id="modalTitle">Confirm Action</h3>
-            <p id="modalMessage"></p>
-            <div class="modal-buttons">
-                <button id="modalCancel" class="btn-cancel">Cancel</button>
-                <button id="modalConfirm" class="btn-confirm">Confirm</button>
+    <!-- Modal remains the same -->
+    <div id="confirm-modal"
+        class="hidden fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xs p-8 text-center shadow-2xl depth-border">
+            <div
+                class="w-16 h-16 bg-slate-50 text-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-200">
+                <i data-lucide="help-circle" class="w-8 h-8"></i>
+            </div>
+            <p id="modal-desc" class="text-slate-500 mb-8 text-sm font-medium leading-relaxed"></p>
+            <div class="flex gap-3">
+                <button onclick="closeModals()"
+                    class="flex-1 py-4 bg-slate-100 rounded-2xl font-bold text-slate-500">No</button>
+                <button id="modal-confirm-btn"
+                    class="flex-1 py-4 bg-[#166534] text-white rounded-2xl font-bold">Yes</button>
             </div>
         </div>
     </div>
 
-
-        </main>
-    </div>
-
+    <script src="index.js"></script>
 </body>
-
-<script src="index.js"></script>
 
 </html>
